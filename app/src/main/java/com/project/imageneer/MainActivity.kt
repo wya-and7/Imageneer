@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.project.imageneer.dashboard.AppNavigation
 import com.project.imageneer.ui.theme.ImageneerTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,6 +27,9 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+        }
+        setContent {
+            AppNavigation()
         }
     }
 }
