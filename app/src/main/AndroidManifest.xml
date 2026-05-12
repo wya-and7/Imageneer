@@ -12,7 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Imageneer">
         <activity
-            android:name=".LoginActivity"
+            android:name=".Dashboard"
+            android:exported="false"
+            android:theme="@style/Theme.Imageneer" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Imageneer">
             <intent-filter>
