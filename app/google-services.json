@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "46596025687",
+    "project_id": "imageneer505",
+    "storage_bucket": "imageneer505.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46596025687:android:5bbae9de08f0cfcee62212",
+        "android_client_info": {
+          "package_name": "com.project.imageneer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSfuoBKRVcTbzXRScYZ6uIE0zE2OK0FmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
