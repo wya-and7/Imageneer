@@ -40,9 +40,12 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
     implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.common)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
