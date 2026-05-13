@@ -52,7 +52,7 @@ fun LoginScreen(navController: NavHostController) {
                     .size(120.dp)
                     .padding(bottom = 8.dp)
             )
-            
+
             // App Name
             Text(
                 text = "Imageneer",
