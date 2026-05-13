@@ -1,10 +1,7 @@
 package com.project.imageneer
 
-import android.content.Intent
-import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,36 +12,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.project.imageneer.ui.theme.ButtonPurple
-import com.project.imageneer.ui.theme.ImageneerTheme
 import com.project.imageneer.ui.theme.MainPurple
 
-class RegisterActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            ImageneerTheme {
-                RegisterScreen(
-                    onLoginClick = {
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                )
-            }
-        }
-    }
-}
+class RegisterActivity : ComponentActivity()
 
 @Composable
-fun RegisterScreen(onLoginClick: () -> Unit) {
-    var username by remember { mutableStateOf("") }
+fun RegisterScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var repeatPassword by remember { mutableStateOf("") }
 
@@ -94,7 +79,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color.Black,
-                        modifier = Modifier.padding(bottom = 24.dp)
+                        modifier = Modifier.padding(bottom = 24.dp),
                     )
 
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -106,8 +91,8 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
                         OutlinedTextField(
-                            value = username,
-                            onValueChange = { username = it },
+                            value = email,
+                            onValueChange = { email = it },
                             placeholder = { Text("Username", color = Color.Gray) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(20.dp),
@@ -115,7 +100,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = MainPurple.copy(alpha = 0.5f),
                                 focusedBorderColor = MainPurple,
-                                cursorColor = MainPurple
+                                cursorColor = MainPurple,
                             )
                         )
                     }
@@ -141,7 +126,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = MainPurple.copy(alpha = 0.5f),
                                 focusedBorderColor = MainPurple,
-                                cursorColor = MainPurple
+                                cursorColor = MainPurple,
                             )
                         )
                     }
@@ -167,7 +152,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedBorderColor = MainPurple.copy(alpha = 0.5f),
                                 focusedBorderColor = MainPurple,
-                                cursorColor = MainPurple
+                                cursorColor = MainPurple,
                             )
                         )
                     }
@@ -175,7 +160,19 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = {},
+                        onClick = {
+                            Firebase.auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful){
+                                        Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+                                        navController.navigate("login"){
+                                            popUpTo("register") { inclusive = true }
+                                        }
+                                    } else {
+                                        Toast.makeText(context, task.exception?.message ?: "Signup failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -198,7 +195,7 @@ fun RegisterScreen(onLoginClick: () -> Unit) {
                         fontSize = 14.sp,
                         modifier = Modifier
                             .align(Alignment.End)
-                            .clickable { onLoginClick() }
+                            .clickable { navController.navigate("login") }
                     )
                 }
             }

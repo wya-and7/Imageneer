@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.project.imageneer.MultiplayerLobby
 
 @Composable
 fun AppNavigation() {
@@ -21,13 +22,13 @@ fun AppNavigation() {
         }
 
         // Solo Screen
-        composable("solo") {
-            SoloScreen()
-        }
+//        composable("solo") {
+//            SoloScreen()
+//        }
 
         // Multiplayer Screen
         composable("multiplayer") {
-            Multiplayer()
+            MultiplayerLobby()
         }
     }
 }
