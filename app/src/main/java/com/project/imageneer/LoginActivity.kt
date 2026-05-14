@@ -46,7 +46,7 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             // Logo
             Image(
-                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .size(120.dp)
