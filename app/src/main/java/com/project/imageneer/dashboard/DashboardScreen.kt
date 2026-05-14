@@ -1,5 +1,6 @@
 package com.project.imageneer.dashboard
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,13 +18,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.project.imageneer.R
+import com.project.imageneer.ui.theme.ImageneerTheme
 
 @Composable
 fun DashboardScreen(navController: NavHostController) {
+
+    val email = FirebaseAuth
+        .getInstance()
+        .currentUser
+        ?.email ?: "User"
+
+    val username = email
+        .substringBefore("@")
+        .replaceFirstChar { it.uppercase() }
 
     Box(
         modifier = Modifier
@@ -38,26 +55,38 @@ fun DashboardScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Spacer(modifier = Modifier.height(64.dp))
             // Logo
-
-            Spacer(modifier = Modifier.height(12.dp))
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Character",
+                modifier = Modifier.size(100.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Title
             Text(
                 text = "Imageneer",
                 color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 48.dp)
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             // Bubble Chat
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.animasi),
+                    contentDescription = "Character",
+                    modifier = Modifier.size(150.dp)
+                )
+
+                Spacer(modifier = Modifier.width(0.dp))
 
                 Box(
                     modifier = Modifier
@@ -69,7 +98,7 @@ fun DashboardScreen(navController: NavHostController) {
                 ) {
 
                     Text(
-                        text = "Halo User,\nSelamat Bermain!!",
+                        text = "Halo $username,\nSelamat Bermain!!",
                         color = Color.DarkGray
                     )
                 }
@@ -120,3 +149,12 @@ fun DashboardScreen(navController: NavHostController) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview() {
+    ImageneerTheme {
+        DashboardScreen(
+            navController = rememberNavController()
+        )
+    }
+}
