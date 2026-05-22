@@ -161,17 +161,23 @@ fun RegisterScreen(navController: NavHostController) {
 
                     Button(
                         onClick = {
-                            Firebase.auth.createUserWithEmailAndPassword(email, password)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful){
-                                        Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
-                                        navController.navigate("login"){
-                                            popUpTo("register") { inclusive = true }
+                            if (email.isBlank() || password.isBlank() || repeatPassword.isBlank()) {
+                                Toast.makeText(context, "Semua kolom harus diisi", Toast.LENGTH_SHORT).show()
+                            } else if (password != repeatPassword) {
+                                Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Firebase.auth.createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful){
+                                            Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+                                            navController.navigate("login"){
+                                                popUpTo("register") { inclusive = true }
+                                            }
+                                        } else {
+                                            Toast.makeText(context, task.exception?.message ?: "Signup failed", Toast.LENGTH_SHORT).show()
                                         }
-                                    } else {
-                                        Toast.makeText(context, task.exception?.message ?: "Signup failed", Toast.LENGTH_SHORT).show()
                                     }
-                                }
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
