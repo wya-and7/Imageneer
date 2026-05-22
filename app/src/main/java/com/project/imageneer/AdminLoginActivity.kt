@@ -24,10 +24,10 @@ import com.google.firebase.auth.auth
 import com.project.imageneer.ui.theme.ButtonPurple
 import com.project.imageneer.ui.theme.MainPurple
 
-class LoginActivity : ComponentActivity()
+class AdminLoginActivity : ComponentActivity()
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun AdminLoginScreen(navController: NavHostController) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -74,7 +74,7 @@ fun LoginScreen(navController: NavHostController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "USER LOGIN",
+                        text = "ADMIN LOGIN",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = Color.Black,
@@ -120,8 +120,8 @@ fun LoginScreen(navController: NavHostController) {
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful){
                                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                                        navController.navigate("home"){
-                                            popUpTo("login") { inclusive = true }
+                                        navController.navigate("admin_home"){
+                                            popUpTo("admin_login") { inclusive = true }
                                         }
                                     } else {
                                         Toast.makeText(context,
@@ -142,24 +142,17 @@ fun LoginScreen(navController: NavHostController) {
                             fontWeight = FontWeight.Bold
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Belum punya akun?",
-                        color = Color(0xFF64B5F6),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .clickable { navController.navigate("register") }
-                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { navController.navigate("admin_login") },
+                onClick = {
+                    navController.navigate("login") {
+                        popUpTo("admin_login") { inclusive = true }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -171,7 +164,7 @@ fun LoginScreen(navController: NavHostController) {
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
             ) {
                 Text(
-                    text = "Login as Administrator",
+                    text = "Login as User",
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal

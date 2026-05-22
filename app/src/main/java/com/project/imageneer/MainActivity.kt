@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import com.project.imageneer.dashboard.DashboardScreen
+import com.project.imageneer.dashboard.AdminDashboardScreen
+import com.project.imageneer.dashboard.TambahGambarScreen
 import com.project.imageneer.ui.theme.ImageneerTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +32,9 @@ fun AuthApp(){
     val navController = rememberNavController()
     NavHost(navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
+        composable("admin_login") { AdminLoginScreen(navController) }
+        composable("admin_home") { AdminDashboardScreen(navController) }
+        composable("tambah_gambar") { TambahGambarScreen(navController) }
         composable("register") { RegisterScreen(navController) }
         composable("home") { DashboardScreen(navController) }
     }
