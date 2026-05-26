@@ -1,4 +1,4 @@
-package com.project.imageneer
+package com.project.imageneer.authentication
 
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.project.imageneer.R
 import com.project.imageneer.ui.theme.ButtonPurple
 import com.project.imageneer.ui.theme.MainPurple
 

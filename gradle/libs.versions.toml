@@ -16,6 +16,9 @@ activityKtx = "1.13.0"
 navigationFragmentKtx = "2.9.8"
 navigationUiKtx = "2.9.8"
 firebaseBom = "34.13.0"
+googleGmsGoogleServices = "4.4.4"
+firebaseAuth = "24.1.0"
+firebaseDatabaseKtx = "20.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,8 +45,10 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-common = { group = "com.google.firebase", name = "firebase-common" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

@@ -108,7 +108,10 @@ fun DashboardScreen(navController: NavHostController) {
 
             // Button Solo
             Button(
-                onClick = { },
+                onClick = {
+                    // Berpindah ke halaman bermain solo
+                    navController.navigate("solo_game")
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF22C55E)
                 ),
@@ -117,7 +120,6 @@ fun DashboardScreen(navController: NavHostController) {
                     .width(250.dp)
                     .height(65.dp)
             ) {
-
                 Text(
                     text = "Solo",
                     fontSize = 26.sp,
@@ -129,7 +131,10 @@ fun DashboardScreen(navController: NavHostController) {
 
             // Button Multiplayer
             Button(
-                onClick = { },
+                onClick = {
+                    // Berpindah ke halaman multiplayer lobby
+                    navController.navigate("multiplayer_lobby")
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFF97316)
                 ),
@@ -138,7 +143,6 @@ fun DashboardScreen(navController: NavHostController) {
                     .width(250.dp)
                     .height(65.dp)
             ) {
-
                 Text(
                     text = "Multiplayer",
                     fontSize = 26.sp,
