@@ -4,14 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import com.project.imageneer.dashboard.DashboardScreen
-import com.project.imageneer.dashboard.AdminDashboardScreen
-import com.project.imageneer.dashboard.TambahGambarScreen
+import com.project.imageneer.dashboard.Navigation
 import com.project.imageneer.ui.theme.ImageneerTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,21 +15,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ImageneerTheme {
-                AuthApp()
+                Navigation()
             }
         }
     }
 }
 
-@Composable
-fun AuthApp(){
-    val navController = rememberNavController()
-    NavHost(navController, startDestination = "login") {
-        composable("login") { LoginScreen(navController) }
-        composable("admin_login") { AdminLoginScreen(navController) }
-        composable("admin_home") { AdminDashboardScreen(navController) }
-        composable("tambah_gambar") { TambahGambarScreen(navController) }
-        composable("register") { RegisterScreen(navController) }
-        composable("home") { DashboardScreen(navController) }
-    }
-}
+

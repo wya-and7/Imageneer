@@ -1,10 +1,9 @@
-package com.project.imageneer
+package com.project.imageneer.authentication
 
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.project.imageneer.R
 import com.project.imageneer.ui.theme.ButtonPurple
 import com.project.imageneer.ui.theme.MainPurple
 
@@ -123,7 +123,7 @@ fun AdminLoginScreen(navController: NavHostController) {
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful){
                                             Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                                            navController.navigate("admin_home"){
+                                            navController.navigate("admin_dashboard"){
                                                 popUpTo("admin_login") { inclusive = true }
                                             }
                                         } else {
