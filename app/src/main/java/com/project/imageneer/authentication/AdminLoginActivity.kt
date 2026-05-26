@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -20,9 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.project.imageneer.R
 import com.project.imageneer.ui.theme.ButtonPurple
 import com.project.imageneer.ui.theme.MainPurple
+import com.google.firebase.firestore.firestore // TAMBAHKAN IMPORT INI
+import com.project.imageneer.R
 
 class AdminLoginActivity : ComponentActivity()
 
@@ -122,9 +124,34 @@ fun AdminLoginScreen(navController: NavHostController) {
                                 Firebase.auth.signInWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful){
-                                            Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
-                                            navController.navigate("admin_dashboard"){
-                                                popUpTo("admin_login") { inclusive = true }
+                                            val uid = Firebase.auth.currentUser?.uid
+                                            if (uid != null) {
+                                                // Cek role di Firestore
+                                                Firebase.firestore.collection("users").document(uid).get()
+                                                    .addOnSuccessListener { document ->
+                                                        if (document != null && document.exists()) {
+                                                            val role = document.getString("role")
+
+                                                            if (role == "admin") {
+                                                                // JIKA ADMIN: Berhasil masuk
+                                                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                                                navController.navigate("admin_home"){
+                                                                    popUpTo("admin_login") { inclusive = true }
+                                                                }
+                                                            } else {
+                                                                // JIKA USER: Tolak akses dan paksa Sign Out
+                                                                Firebase.auth.signOut()
+                                                                Toast.makeText(context, "Akses ditolak. Anda bukan Admin!", Toast.LENGTH_LONG).show()
+                                                            }
+                                                        } else {
+                                                            Firebase.auth.signOut()
+                                                            Toast.makeText(context, "Data tidak ditemukan", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Firebase.auth.signOut()
+                                                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                    }
                                             }
                                         } else {
                                             Toast.makeText(context,
