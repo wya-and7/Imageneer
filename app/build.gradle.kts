@@ -45,6 +45,9 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
 
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
+
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(libs.firebase.auth)
     implementation(libs.firebase.common)
