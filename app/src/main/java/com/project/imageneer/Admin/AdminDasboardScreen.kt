@@ -38,15 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.project.imageneer.R
-
-data class Tebakan(
-    val gambar: Int,
-    val jawaban: String
-)
+import com.project.imageneer.dashboard.DashboardScreen
+import com.project.imageneer.ui.theme.ImageneerTheme
 
 @Composable
-fun AdminDashboardScreen() {
+fun AdminDashboardScreen(navController: NavHostController) {
 
     val daftarTebakan = listOf(
         Tebakan(R.drawable.animasi, "Selalu Tersenyum"),
@@ -85,12 +84,18 @@ fun AdminDashboardScreen() {
                     fontWeight = FontWeight.Bold
                 )
 
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Admin",
-                    tint = Color.White,
-                    modifier = Modifier.size(40.dp)
-                )
+                IconButton(
+                    onClick = {
+                        navController.navigate("Profil")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Admin",
+                        tint = Color.White,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
         }
 
@@ -122,7 +127,7 @@ fun AdminDashboardScreen() {
         // BUTTON TAMBAH
         Button(
             onClick = {
-
+                navController.navigate("Add_Image")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -238,7 +243,9 @@ fun AdminDashboardScreen() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AdminDashboardPreview() {
-    MaterialTheme {
-        AdminDashboardScreen()
+    ImageneerTheme {
+        AdminDashboardScreen(
+            navController = rememberNavController()
+        )
     }
 }
