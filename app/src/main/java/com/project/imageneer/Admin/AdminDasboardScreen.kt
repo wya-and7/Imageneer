@@ -39,18 +39,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.project.imageneer.R
-
-data class Tebakan(
-    val gambar: Int,
-    val jawaban: String
-)
+import com.project.imageneer.data.GuessData
 
 @Composable
 fun AdminDashboardScreen() {
 
     val daftarTebakan = listOf(
-        Tebakan(R.drawable.animasi, "Selalu Tersenyum"),
-        Tebakan(R.drawable.animasi, "Selalu Tersenyum")
+        GuessData(R.drawable.animasi, "Selalu Tersenyum"),
+        GuessData(R.drawable.animasi, "Selalu Tersenyum")
     )
 
     Column(
