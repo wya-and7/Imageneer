@@ -9,6 +9,7 @@ import com.project.imageneer.Admin.AdminDashboardScreen
 import com.project.imageneer.authentication.AdminLoginScreen
 import com.project.imageneer.authentication.LoginScreen
 import com.project.imageneer.game.MultiplayerLobbyScreen
+import com.project.imageneer.authentication.ForgotPasswordScreen
 import com.project.imageneer.authentication.RegisterScreen
 import com.project.imageneer.game.SoloGameScreen
 
@@ -18,6 +19,7 @@ fun Navigation(){
     NavHost(navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("register") { RegisterScreen(navController) }
+        composable("forgot_password") { ForgotPasswordScreen(navController) }
         composable("home") { DashboardScreen(navController) }
         composable("solo_game") { SoloGameScreen(navController) }
         composable("multiplayer_lobby") { MultiplayerLobbyScreen(navController) }
