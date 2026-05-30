@@ -21,9 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.project.imageneer.R
 import com.project.imageneer.ui.theme.ButtonPurple
 import com.project.imageneer.ui.theme.MainPurple
+import com.google.firebase.firestore.firestore
+import com.project.imageneer.R
 
 class RegisterActivity : ComponentActivity()
 
@@ -54,7 +55,7 @@ fun RegisterScreen(navController: NavHostController) {
                     .size(120.dp)
                     .padding(bottom = 8.dp)
             )
-            
+
             // App Name
             Text(
                 text = "Imageneer",
@@ -167,12 +168,34 @@ fun RegisterScreen(navController: NavHostController) {
                             } else if (password != repeatPassword) {
                                 Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
                             } else {
+                                // 1. Buat akun di Firebase Authentication terlebih dahulu
                                 Firebase.auth.createUserWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
-                                        if (task.isSuccessful){
-                                            Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
-                                            navController.navigate("login"){
-                                                popUpTo("register") { inclusive = true }
+                                        if (task.isSuccessful) {
+                                            // Ambil UID dari user yang baru saja sukses didaftarkan
+                                            val uid = Firebase.auth.currentUser?.uid
+
+                                            // Siapkan data yang mau disimpan ke Firestore
+                                            val userMap = hashMapOf(
+                                                "email" to email,
+                                                "role" to "user" // Otomatis diset sebagai user biasa
+                                            )
+
+                                            if (uid != null) {
+                                                // 2. Simpan data ke Firestore di dalam koleksi "users" dengan ID dokumen berupa UID
+                                                Firebase.firestore.collection("users").document(uid)
+                                                    .set(userMap)
+                                                    .addOnSuccessListener {
+                                                        // Pendaftaran Auth + Firestore Berhasil
+                                                        Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+                                                        navController.navigate("login") {
+                                                            popUpTo("register") { inclusive = true }
+                                                        }
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        // Jika Firestore gagal (misal masalah jaringan/rules), hapus/infokan ke user
+                                                        Toast.makeText(context, "Gagal menyimpan data user: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                    }
                                             }
                                         } else {
                                             Toast.makeText(context, task.exception?.message ?: "Signup failed", Toast.LENGTH_SHORT).show()
