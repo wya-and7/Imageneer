@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.project.imageneer.R
+import com.project.imageneer.data.GuessData
 import com.project.imageneer.dashboard.DashboardScreen
 import com.project.imageneer.ui.theme.ImageneerTheme
 
@@ -48,8 +49,8 @@ import com.project.imageneer.ui.theme.ImageneerTheme
 fun AdminDashboardScreen(navController: NavHostController) {
 
     val daftarTebakan = listOf(
-        Tebakan(R.drawable.animasi, "Selalu Tersenyum"),
-        Tebakan(R.drawable.animasi, "Selalu Tersenyum")
+        GuessData(R.drawable.animasi, "Selalu Tersenyum"),
+        GuessData(R.drawable.animasi, "Selalu Tersenyum")
     )
 
     Column(
