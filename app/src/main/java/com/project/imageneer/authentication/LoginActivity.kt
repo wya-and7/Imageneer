@@ -120,6 +120,8 @@ fun LoginScreen(navController: NavHostController) {
                         onClick = {
                             if (email.isBlank() || password.isBlank()) {
                                 Toast.makeText(context, "Username dan password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                            } else if (password.length < 6) {
+                                Toast.makeText(context, "password minimal 6 digit", Toast.LENGTH_SHORT).show()
                             } else {
                                 Firebase.auth.signInWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
@@ -150,8 +152,7 @@ fun LoginScreen(navController: NavHostController) {
                                                     }
                                             }
                                         } else {
-                                            Toast.makeText(context,
-                                                task.exception?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "password salah", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
@@ -172,14 +173,27 @@ fun LoginScreen(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "Belum punya akun?",
-                        color = Color(0xFF64B5F6),
-                        fontSize = 14.sp,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .clickable { navController.navigate("register") }
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Lupa Password?",
+                            color = Color(0xFF64B5F6),
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .clickable { navController.navigate("forgot_password") }
+                        )
+
+                        Text(
+                            text = "Belum punya akun?",
+                            color = Color(0xFF64B5F6),
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .clickable { navController.navigate("register") }
+                        )
+                    }
                 }
             }
 

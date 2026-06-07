@@ -12,6 +12,7 @@ import com.project.imageneer.Admin.ProfileScreen
 import com.project.imageneer.authentication.AdminLoginScreen
 import com.project.imageneer.authentication.LoginScreen
 import com.project.imageneer.game.MultiplayerLobbyScreen
+import com.project.imageneer.authentication.ForgotPasswordScreen
 import com.project.imageneer.authentication.RegisterScreen
 import com.project.imageneer.game.MultiplayerGameScreen
 import com.project.imageneer.game.MultiplayerHistoryScreen
@@ -24,6 +25,7 @@ fun Navigation(){
     NavHost(navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("register") { RegisterScreen(navController) }
+        composable("forgot_password") { ForgotPasswordScreen(navController) }
         composable("home") { DashboardScreen(navController) }
         composable("solo_game") { SoloGameScreen(navController) }
         composable("multiplayer_lobby") { MultiplayerLobbyScreen(navController) }
@@ -43,8 +45,10 @@ fun Navigation(){
         composable("multiplayer_history") { MultiplayerHistoryScreen(navController = navController) }
 
         // Admin
-        composable ("admin_dashboard"){ AdminDashboardScreen(navController) }
+        composable ("admin_home"){ AdminDashboardScreen(navController) }
         composable("admin_login") { AdminLoginScreen(navController) }
+        composable("add_image") { AddImageScreen(navController) }
+        composable("profile") { ProfileScreen(navController) }
         composable("Add_Image") { AddImageScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
     }

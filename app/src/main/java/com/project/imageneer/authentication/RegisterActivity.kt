@@ -165,6 +165,8 @@ fun RegisterScreen(navController: NavHostController) {
                         onClick = {
                             if (email.isBlank() || password.isBlank() || repeatPassword.isBlank()) {
                                 Toast.makeText(context, "Semua kolom harus diisi", Toast.LENGTH_SHORT).show()
+                            } else if (password.length < 6) {
+                                Toast.makeText(context, "password minimal 6 digit", Toast.LENGTH_SHORT).show()
                             } else if (password != repeatPassword) {
                                 Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
                             } else {

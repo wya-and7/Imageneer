@@ -2,6 +2,7 @@ package com.project.imageneer.Admin
 
 import androidx.navigation.NavHostController
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,20 +38,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.rememberAsyncImagePainter
 import com.project.imageneer.ui.theme.ImageneerTheme
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 
 @Composable
 fun AddImageScreen(
     navController: NavHostController
 ) {
 
+    val context = LocalContext.current
+    val viewModel: AdminViewModel = viewModel()
     var answer by remember { mutableStateOf("") }
 
     // nanti ini untuk gambar yang dipilih
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        imageUri = uri
     }
 
     Box(
@@ -182,9 +195,7 @@ fun AddImageScreen(
                     // BUTTON PILIH GAMBAR
                     Button(
                         onClick = {
-
-                            // nanti launcher gallery disini
-
+                            launcher.launch("image/*")
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -238,7 +249,28 @@ fun AddImageScreen(
                     Button(
                         onClick = {
 
-                            // upload ke firebase storage disini
+                            if (imageUri != null) {
+                                viewModel.uploadImage(
+                                    imageUri = imageUri!!,
+                                    answer = answer,
+                                    onSuccess = {
+                                        Toast.makeText(
+                                            context,
+                                            "Upload berhasil",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        navController.popBackStack()
+                                    },
+
+                                    onFailure = {
+                                        Toast.makeText(
+                                            context,
+                                            it.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                )
+                            }
 
                         },
                         modifier = Modifier

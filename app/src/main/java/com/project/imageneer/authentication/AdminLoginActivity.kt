@@ -120,6 +120,8 @@ fun AdminLoginScreen(navController: NavHostController) {
                         onClick = {
                             if (email.isBlank() || password.isBlank()) {
                                 Toast.makeText(context, "Username dan password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                            } else if (password.length < 6) {
+                                Toast.makeText(context, "password minimal 6 digit", Toast.LENGTH_SHORT).show()
                             } else {
                                 Firebase.auth.signInWithEmailAndPassword(email, password)
                                     .addOnCompleteListener { task ->
@@ -154,8 +156,7 @@ fun AdminLoginScreen(navController: NavHostController) {
                                                     }
                                             }
                                         } else {
-                                            Toast.makeText(context,
-                                                task.exception?.message ?: "Login failed", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "password salah", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
