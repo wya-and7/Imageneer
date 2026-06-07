@@ -51,6 +51,10 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
     implementation("com.google.firebase:firebase-database")
+
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
+
     implementation("com.google.firebase:firebase-storage")
 
     implementation("io.coil-kt.coil3:coil-compose:3.0.0")
