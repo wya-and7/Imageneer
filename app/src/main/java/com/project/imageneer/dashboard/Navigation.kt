@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.project.imageneer.Admin.AddImageScreen
 import com.project.imageneer.Admin.AdminDashboardScreen
+import com.project.imageneer.Admin.ProfileScreen
 import com.project.imageneer.authentication.AdminLoginScreen
 import com.project.imageneer.authentication.LoginScreen
 import com.project.imageneer.game.MultiplayerLobbyScreen
@@ -25,8 +26,9 @@ fun Navigation(){
         composable("multiplayer_lobby") { MultiplayerLobbyScreen(navController) }
 
         // Admin
-        composable ("admin_dashboard"){ AdminDashboardScreen(navController) }
+        composable ("admin_home"){ AdminDashboardScreen(navController) }
         composable("admin_login") { AdminLoginScreen(navController) }
-        composable("Add_Image") { AddImageScreen(navController) }
+        composable("add_image") { AddImageScreen(navController) }
+        composable("profile") { ProfileScreen(navController) }
     }
 }

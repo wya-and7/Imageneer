@@ -52,7 +52,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
-
+    implementation("com.google.firebase:firebase-storage")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.firebase.auth)
     implementation(libs.firebase.common)
@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.firebase.storage)
     implementation(libs.material)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.appcompat)
