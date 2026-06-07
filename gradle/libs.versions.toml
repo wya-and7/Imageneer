@@ -19,6 +19,7 @@ firebaseBom = "34.13.0"
 googleGmsGoogleServices = "4.4.4"
 firebaseAuth = "24.1.0"
 firebaseDatabaseKtx = "20.3.0"
+firebaseStorage = "22.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-common = { group = "com.google.firebase", name = "firebase-common" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

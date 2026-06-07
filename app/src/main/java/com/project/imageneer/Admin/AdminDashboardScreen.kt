@@ -1,5 +1,6 @@
 package com.project.imageneer.Admin
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,30 +29,58 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.project.imageneer.R
 import com.project.imageneer.data.GuessData
 import com.project.imageneer.dashboard.DashboardScreen
+import com.project.imageneer.data.SoalSolo
 import com.project.imageneer.ui.theme.ImageneerTheme
 
 @Composable
 fun AdminDashboardScreen(navController: NavHostController) {
 
-    val daftarTebakan = listOf(
-        GuessData(R.drawable.animasi, "Selalu Tersenyum"),
-        GuessData(R.drawable.animasi, "Selalu Tersenyum")
-    )
+    val viewModel: AdminViewModel = viewModel()
+    val email = FirebaseAuth
+        .getInstance()
+        .currentUser
+        ?.email ?: "User"
+
+    val username = email
+        .substringBefore("@")
+        .replaceFirstChar { it.uppercase() }
+
+    var daftarTebakan by remember {
+        mutableStateOf<List<SoalSolo>>(emptyList())
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getSoal {
+            daftarTebakan = it
+        }
+    }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -87,7 +116,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
 
                 IconButton(
                     onClick = {
-                        navController.navigate("Profil")
+                        navController.navigate("profile")
                     }
                 ) {
                     Icon(
@@ -108,7 +137,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
         ) {
 
             Text(
-                text = "Selamat Datang Admin Username!",
+                text = "Selamat Datang Admin $username",
                 fontWeight = FontWeight.Bold,
                 fontSize = 22.sp,
                 color = Color.Black
@@ -128,7 +157,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
         // BUTTON TAMBAH
         Button(
             onClick = {
-                navController.navigate("Add_Image")
+                navController.navigate("add_image")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -188,13 +217,8 @@ fun AdminDashboardScreen(navController: NavHostController) {
                     ) {
 
                         // IMAGE
-                        Image(
-                            painter = painterResource(id = item.gambar),
-                            contentDescription = "Gambar",
-                            modifier = Modifier
-                                .size(70.dp)
-                                .clip(RoundedCornerShape(10.dp)),
-                            contentScale = ContentScale.Crop
+                        StorageImage(
+                            storagePath = item.imageUrl
                         )
 
                         Spacer(modifier = Modifier.width(16.dp))
@@ -214,7 +238,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
                             Spacer(modifier = Modifier.height(4.dp))
 
                             Text(
-                                text = item.jawaban,
+                                text = item.kunciJawaban,
                                 fontSize = 16.sp,
                                 color = Color.DarkGray
                             )
@@ -224,6 +248,25 @@ fun AdminDashboardScreen(navController: NavHostController) {
                         IconButton(
                             onClick = {
 
+                                viewModel.deleteSoal(
+                                    soal = item,
+
+                                    onSuccess = {
+                                        Toast.makeText(
+                                            context,
+                                            "Data berhasil dihapus",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    },
+
+                                    onFailure = {
+                                        Toast.makeText(
+                                            context,
+                                            it.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                )
                             }
                         ) {
 
@@ -239,6 +282,35 @@ fun AdminDashboardScreen(navController: NavHostController) {
             }
         }
     }
+}
+
+@Composable
+fun StorageImage(
+    storagePath: String
+) {
+
+    var downloadUrl by remember(storagePath) {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(storagePath) {
+        FirebaseStorage.getInstance()
+            .reference
+            .child(storagePath)
+            .downloadUrl
+            .addOnSuccessListener { uri ->
+                downloadUrl = uri.toString()
+            }
+    }
+
+    AsyncImage(
+        model = downloadUrl,
+        contentDescription = null,
+        modifier = Modifier
+            .size(70.dp)
+            .clip(RoundedCornerShape(10.dp)),
+        contentScale = ContentScale.Crop
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
