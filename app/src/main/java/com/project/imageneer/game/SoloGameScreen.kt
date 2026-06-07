@@ -1,5 +1,6 @@
 package com.project.imageneer.game
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,18 +14,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.SubcomposeAsyncImage
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.project.imageneer.R
-import com.project.imageneer.data.SoalSolo
+import com.project.imageneer.data.SoalSoloEntity
+import com.project.imageneer.data.AppDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SoloGameScreen(navController: NavHostController) {
@@ -34,32 +34,30 @@ fun SoloGameScreen(navController: NavHostController) {
     var jawabanUser by remember { mutableStateOf("") }
     var skor by remember { mutableIntStateOf(0) }
 
-    // State Firebase Data
-    var daftarSoal by remember { mutableStateOf<List<SoalSolo>>(emptyList()) }
+    // State Room Database Data
+    var daftarSoal by remember { mutableStateOf<List<SoalSoloEntity>>(emptyList()) }
     var indeksSoalSekarang by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // Ambil data dari Firebase
-    LaunchedEffect(Unit) {
-        val databaseRef = FirebaseDatabase.getInstance().getReference("permainan_solo")
-        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val listTemp = mutableListOf<SoalSolo>()
-                for (data in snapshot.children) {
-                    val soal = data.getValue(SoalSolo::class.java)
-                    if (soal != null) {
-                        listTemp.add(soal)
-                    }
-                }
-                daftarSoal = listTemp.shuffled()
-                isLoading = false
-            }
+    // Mengambil DAO Room
+    val db = remember { AppDatabase.getDatabase(context) }
+    val soalDao = remember { db.soalSoloLocalDao() }
 
-            override fun onCancelled(error: DatabaseError) {
-                isLoading = false
-                Toast.makeText(context, "Gagal memuat: ${error.message}", Toast.LENGTH_SHORT).show()
+    // Ambil data dari Room Database secara asinkron
+    LaunchedEffect(Unit) {
+        try {
+            val listTemp = withContext(Dispatchers.IO) {
+                soalDao.getAllSoal()
             }
-        })
+            daftarSoal = listTemp.shuffled()
+            isLoading = false
+
+            Log.d("SoloGameScreen", "Jumlah soal yang berhasil dimuat: ${listTemp.size}")
+        } catch (e: Exception) {
+            isLoading = false
+            Toast.makeText(context, "Gagal memuat database lokal: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            Log.e("SoloGameScreen", "Error query Room: ${e.message}", e)
+        }
     }
 
     Box(
@@ -74,7 +72,7 @@ fun SoloGameScreen(navController: NavHostController) {
             )
         } else if (daftarSoal.isEmpty()) {
             Text(
-                text = "Tidak ada data soal tersedia.",
+                text = "Tidak ada data soal lokal tersedia.",
                 color = Color.White,
                 fontSize = 18.sp,
                 modifier = Modifier.align(Alignment.Center)
@@ -83,24 +81,61 @@ fun SoloGameScreen(navController: NavHostController) {
             // Tampilan Selesai
             Column(
                 modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text("Permainan Selesai!", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
                 Text("Total Skormu: $skor", color = Color(0xFF22C55E), fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Button(
                     onClick = {
                         skor = 0
                         indeksSoalSekarang = 0
+                        jawabanUser = ""
                         daftarSoal = daftarSoal.shuffled()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(28.dp),
+                    modifier = Modifier.width(220.dp).height(50.dp)
                 ) {
-                    Text("Main Lagi", color = Color(0xFF7C3AED), fontWeight = FontWeight.Bold)
+                    Text("Main Lagi", color = Color(0xFF7C3AED), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+
+                Button(
+                    onClick = {
+                        navController.navigate("home") {
+                            popUpTo("home") { inclusive = true }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B35)),
+                    shape = RoundedCornerShape(28.dp),
+                    modifier = Modifier.width(220.dp).height(50.dp)
+                ) {
+                    Text("Kembali ke Dashboard", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         } else {
             val soalAktif = daftarSoal[indeksSoalSekarang]
+
+            // Perbaikan Logika: Membersihkan string nama file dari spasi atau extension (.png/.jpg) jika terikut di DB
+            val namaGambarBersih = remember(soalAktif.imageName) {
+                soalAktif.imageName.trim()
+                    .substringBefore(".") // Menghilangkan ".png" atau ".jpg" jika ada di DB
+            }
+
+            // Mencari ID Resource Gambar secara dinamis
+            val imageResId = remember(namaGambarBersih) {
+                val resId = context.resources.getIdentifier(
+                    namaGambarBersih,
+                    "drawable",
+                    context.packageName
+                )
+                // Cetak log untuk debugging di Logcat Android Studio
+                Log.d("SoloGameScreen", "Mencari drawable bernama: '$namaGambarBersih' -> Hasil Res ID: $resId")
+                resId
+            }
 
             Column(
                 modifier = Modifier
@@ -127,6 +162,18 @@ fun SoloGameScreen(navController: NavHostController) {
 
                     Box(
                         modifier = Modifier
+                            .background(Color(0xFFF97316), shape = RoundedCornerShape(50.dp))
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = "Stage : ${indeksSoalSekarang + 1}/${daftarSoal.size}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
                             .background(Color(0xFF22C55E), shape = RoundedCornerShape(50.dp))
                             .padding(horizontal = 20.dp, vertical = 8.dp)
                     ) {
@@ -134,7 +181,7 @@ fun SoloGameScreen(navController: NavHostController) {
                     }
                 }
 
-                // MAIN CARD PLAYGROUND (Sesuai Gambar Mockup Anda)
+                // MAIN CARD GAME
                 Card(
                     shape = RoundedCornerShape(28.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -146,7 +193,7 @@ fun SoloGameScreen(navController: NavHostController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        // Container Gambar menggunakan SubcomposeAsyncImage agar proses render aman
+                        // Container Gambar Lokal
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -154,24 +201,13 @@ fun SoloGameScreen(navController: NavHostController) {
                                 .background(Color(0xFFFCE7F3), shape = RoundedCornerShape(16.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            SubcomposeAsyncImage(
-                                model = soalAktif.imageUrl,
-                                contentDescription = "Gambar Kuis",
+                            Image(
+                                painter = painterResource(
+                                    id = if (imageResId != 0) imageResId else R.drawable.logo
+                                ),
+                                contentDescription = "Gambar Kuis Lokal",
                                 modifier = Modifier.fillMaxSize().padding(12.dp),
-                                contentScale = ContentScale.Fit,
-                                loading = {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        CircularProgressIndicator(color = Color(0xFF7C3AED), strokeWidth = 3.dp)
-                                    }
-                                },
-                                error = {
-                                    // Menampilkan Gambar Cadangan jika URL internet bermasalah atau gagal load
-                                    Image(
-                                        painter = painterResource(id = R.drawable.logo),
-                                        contentDescription = "Gagal memuat gambar",
-                                        modifier = Modifier.size(120.dp)
-                                    )
-                                }
+                                contentScale = ContentScale.Fit
                             )
                         }
 
@@ -196,7 +232,7 @@ fun SoloGameScreen(navController: NavHostController) {
                                 focusedBorderColor = Color(0xFF7C3AED),
                                 unfocusedBorderColor = Color(0xFFC084FC)
                             ),
-                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center, fontSize = 16.sp)
+                            textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 16.sp)
                         )
 
                         // Tombol Jawab
